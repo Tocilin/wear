@@ -88,20 +88,17 @@ function hexToRgb(hex) {
 function buildRegion(maskData) {
   const idx = [];
   const alpha = [];
-  let sum = 0;
-  let weight = 0;
+  const core = [];
   for (let p = 0, i = 0; i < maskData.length; p++, i += 4) {
     const a = maskData[i] / 255;
     if (a > 0.01) {
       idx.push(p);
       alpha.push(a);
-      if (a > 0.5) {
-        sum += luma[p];
-        weight++;
-      }
+      if (a > 0.5) core.push(luma[p]);
     }
   }
-  const ref = Math.max(weight ? sum / weight : 128, 1);
+  core.sort((x, y) => x - y);
+  const ref = Math.max(core.length ? core[core.length >> 1] : 128, 1);
   // Dark fabrics carry relatively more noise in their shading, so lifting
   // them to a light color needs the shading toned down.
   const strength = Math.min(1, Math.max(0.35, ref / 150));
@@ -111,21 +108,17 @@ function buildRegion(maskData) {
 // Paint a garment in `rgb`, keeping the photo's folds and shadows.
 function recolor(out, region, rgb) {
   const { idx, alpha, ref, strength } = region;
-  const src = base.data;
   for (let k = 0; k < idx.length; k++) {
     const p = idx[k];
     const i = p * 4;
-    const s = luma[p] / ref;
+    // Clamped so stray background pixels at the edges don't glow and deep
+    // shadows along the seams don't turn into black outlines.
+    const s = Math.min(Math.max(luma[p] / ref, 0.4), 1.6);
     const a = alpha[k];
     for (let ch = 0; ch < 3; ch++) {
       const t = rgb[ch];
-      let v;
-      if (s <= 1) {
-        v = t * (1 - strength * (1 - s));
-      } else {
-        v = t + (255 - t) * Math.min(1, strength * (s - 1) * 0.6);
-      }
-      out[i + ch] = src[i + ch] * (1 - a) + v * a;
+      const v = t * (1 + strength * (s - 1));
+      out[i + ch] = out[i + ch] * (1 - a) + v * a;
     }
   }
 }
