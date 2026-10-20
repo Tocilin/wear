@@ -3,6 +3,22 @@
 
 const PHOTO = "assets/model.jpg";
 
+// Where to buy the pants shown. Set `price` (e.g. "$98") to show it.
+const TROUSER = {
+  brand: "01.ALGO",
+  name: "WarpTech Commuter Slim Fit Trouser",
+  fit: "Slim",
+  size: "34 × 34",
+  price: null,
+  store: "Stitch Fix",
+  url: "https://www.stitchfix.com/product/01-Algo-WarpTech-Commuter-Slim-Fit-Trouser/N32ZMVNWX",
+};
+const FIVE_POCKET = {
+  ...TROUSER,
+  name: "WarpTech Commuter 5 Pocket Slim Fit Pant",
+  url: null,
+};
+
 const CATEGORIES = [
   {
     id: "tshirt",
@@ -29,9 +45,9 @@ const CATEGORIES = [
     mask: "assets/mask-pants.png",
     colors: [
       // Sampled from the 01.ALGO WarpTech Commuter product photos.
-      { name: "Khaki", hex: "#b4a18b" },
-      { name: "Light Grey", hex: "#868183" },
-      { name: "Blue", hex: "#213a61" },
+      { name: "Khaki", hex: "#b4a18b", product: TROUSER },
+      { name: "Light Grey", hex: "#868183", product: FIVE_POCKET },
+      { name: "Blue", hex: "#213a61", product: TROUSER },
     ],
   },
   {
@@ -145,6 +161,31 @@ function randomize() {
   render();
 }
 
+function renderDetails(el, product) {
+  el.hidden = !product;
+  el.replaceChildren();
+  if (!product) return;
+
+  const name = document.createElement("p");
+  name.className = "details-name";
+  name.textContent = `${product.brand} ${product.name}`;
+
+  const facts = document.createElement("p");
+  facts.className = "details-facts";
+  facts.textContent = [`Size ${product.size}`, `${product.fit} fit`, product.price].filter(Boolean).join(" · ");
+
+  el.append(name, facts);
+  if (product.url) {
+    const buy = document.createElement("a");
+    buy.className = "details-buy";
+    buy.href = product.url;
+    buy.target = "_blank";
+    buy.rel = "noopener";
+    buy.textContent = `Buy at ${product.store}`;
+    el.append(buy);
+  }
+}
+
 function buildPanel() {
   for (const cat of CATEGORIES) {
     const group = document.createElement("div");
@@ -176,14 +217,19 @@ function buildPanel() {
       return b;
     });
 
+    const details = document.createElement("div");
+    details.className = "details";
+
     function update() {
       buttons.forEach((b, i) => b.setAttribute("aria-pressed", String(i === selected[cat.id])));
-      current.textContent = cat.colors[selected[cat.id]].name;
+      const color = cat.colors[selected[cat.id]];
+      current.textContent = color.name;
+      renderDetails(details, color.product);
     }
     update();
     refreshers.push(update);
 
-    group.append(title, current, swatches);
+    group.append(title, current, swatches, details);
     panel.appendChild(group);
   }
 }

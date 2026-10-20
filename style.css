@@ -79,6 +79,40 @@ body {
   outline: 2px solid var(--text);
 }
 
+.details {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.details[hidden] { display: none; }
+
+.details p { margin: 0; }
+
+.details-name {
+  font-weight: 600;
+}
+
+.details .details-facts {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.details-buy {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.details-buy:hover { filter: brightness(1.1); }
+
 .stage {
   display: flex;
   flex-direction: column;
@@ -194,6 +228,36 @@ canvas {
   }
   .group .current {
     display: none;
+  }
+  .group {
+    flex-wrap: wrap;
+  }
+  /* Product details: name and facts on the left, Buy on the right. */
+  .details {
+    flex: 1 0 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 10px;
+    margin: 0 0 4px;
+    padding-top: 6px;
+  }
+  .details-name,
+  .details .details-facts {
+    grid-column: 1;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  .details-buy {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+    white-space: nowrap;
   }
   .swatches {
     flex: 1;
