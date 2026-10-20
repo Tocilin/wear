@@ -52,18 +52,20 @@ const CATEGORIES = [
     id: "tshirt",
     label: "T-shirt",
     mask: "assets/mask-tshirt.png",
+    product: STAY_TUCKED,
     colors: [
-      { name: "White", hex: "#f4f3ef", original: true, product: STAY_TUCKED },
-      { name: "Heather Gray", hex: "#a9a9a6", product: STAY_TUCKED },
-      { name: "Black", hex: "#262626", product: STAY_TUCKED },
+      { name: "White", hex: "#f4f3ef", original: true },
+      { name: "Heather Gray", hex: "#a9a9a6" },
+      { name: "Black", hex: "#262626" },
     ],
   },
   {
     id: "shirt",
     label: "Shirt",
     mask: "assets/mask-shirt.png",
+    product: GIRONDE,
     colors: [
-      { name: "Dark Navy", hex: "#1f2c4c", original: true, product: GIRONDE },
+      { name: "Dark Navy", hex: "#1f2c4c", original: true },
       { name: "Light Blue", hex: "#8db3e8" },
     ],
   },
@@ -71,19 +73,21 @@ const CATEGORIES = [
     id: "pants",
     label: "Pants",
     mask: "assets/mask-pants.png",
+    product: TROUSER,
     colors: [
       // Sampled from the 01.ALGO WarpTech Commuter product photos.
-      { name: "Khaki", hex: "#b4a18b", product: TROUSER },
-      { name: "Light Grey", hex: "#868183", product: TROUSER },
-      { name: "Blue", hex: "#213a61", product: TROUSER },
+      { name: "Khaki", hex: "#b4a18b" },
+      { name: "Light Grey", hex: "#868183" },
+      { name: "Blue", hex: "#213a61" },
     ],
   },
   {
     id: "shoes",
     label: "Shoes",
     mask: "assets/mask-shoes.png",
+    product: CODE_H_VIBE,
     colors: [
-      { name: "Navy Sneakers", hex: "#1f2a44", original: true, product: CODE_H_VIBE },
+      { name: "Navy Sneakers", hex: "#1f2a44", original: true },
       { name: "White Sneakers", hex: "#f1f1ee" },
     ],
   },
@@ -95,6 +99,9 @@ const panel = document.getElementById("panel");
 const summary = document.getElementById("summary");
 const loading = document.getElementById("loading");
 const randomButton = document.getElementById("random");
+const shopButton = document.getElementById("shop");
+const shopDialog = document.getElementById("shop-dialog");
+const shopList = document.getElementById("shop-list");
 
 // Selected color index per category; start on the photo's own colors.
 const selected = {};
@@ -189,44 +196,50 @@ function randomize() {
   render();
 }
 
-function renderDetails(el, product) {
-  el.hidden = !product;
-  el.replaceChildren();
-  if (!product) return;
+// "Where to buy": every garment's product, in the color picked right now.
+function renderShopList() {
+  shopList.replaceChildren();
+  for (const cat of CATEGORIES) {
+    const product = cat.product;
+    if (!product) continue;
 
-  const name = document.createElement("p");
-  name.className = "details-name";
-  name.textContent = `${product.brand} ${product.name}`;
+    const item = document.createElement("li");
+    item.className = "shop-item";
 
-  const facts = document.createElement("p");
-  facts.className = "details-facts";
-  facts.textContent = [
-    product.size && `Size ${product.size}`,
-    product.fit && `${product.fit} fit`,
-    product.width && `Width ${product.width}`,
-    product.material,
-    product.price,
-  ].filter(Boolean).join(" · ");
+    const label = document.createElement("p");
+    label.className = "shop-label";
+    label.textContent = cat.label;
 
-  el.append(name);
-  if (facts.textContent) el.append(facts);
-  if (product.url) {
+    const name = document.createElement("p");
+    name.className = "shop-name";
+    name.textContent = `${product.brand} ${product.name}`;
+
+    const facts = document.createElement("p");
+    facts.className = "shop-facts";
+    facts.textContent = [
+      cat.colors[selected[cat.id]].name,
+      product.size && `Size ${product.size}`,
+      product.fit && `${product.fit} fit`,
+      product.width && `Width ${product.width}`,
+      product.material,
+      product.price,
+    ].filter(Boolean).join(" · ");
+
     const buy = document.createElement("a");
-    buy.className = "details-buy";
+    buy.className = "shop-buy";
     buy.href = product.url;
     buy.target = "_blank";
     buy.rel = "noopener";
-    const store = document.createElement("span");
-    store.className = "details-store";
-    store.textContent = ` at ${product.store}`;
-    buy.append("Buy", store);
-    el.append(buy);
+    buy.textContent = `Buy at ${product.store}`;
+
+    item.append(label, name, facts, buy);
+    shopList.appendChild(item);
   }
 }
 
-// Phones only have room for one product's details: the garment last tapped.
-function setActive(group) {
-  for (const g of panel.children) g.classList.toggle("active", g === group);
+function openShop() {
+  renderShopList();
+  shopDialog.showModal();
 }
 
 function buildPanel() {
@@ -253,7 +266,6 @@ function buildPanel() {
       b.setAttribute("aria-label", color.name);
       b.addEventListener("click", () => {
         selected[cat.id] = i;
-        setActive(group);
         update();
         render();
       });
@@ -261,22 +273,16 @@ function buildPanel() {
       return b;
     });
 
-    const details = document.createElement("div");
-    details.className = "details";
-
     function update() {
       buttons.forEach((b, i) => b.setAttribute("aria-pressed", String(i === selected[cat.id])));
-      const color = cat.colors[selected[cat.id]];
-      current.textContent = color.name;
-      renderDetails(details, color.product);
+      current.textContent = cat.colors[selected[cat.id]].name;
     }
     update();
     refreshers.push(update);
 
-    group.append(title, current, swatches, details);
+    group.append(title, current, swatches);
     panel.appendChild(group);
   }
-  setActive(panel.firstElementChild);
 }
 
 async function init() {
@@ -302,6 +308,11 @@ async function init() {
     loading.hidden = true;
     randomButton.hidden = false;
     randomButton.addEventListener("click", randomize);
+    shopButton.addEventListener("click", openShop);
+    // Clicking the dimmed backdrop (outside the sheet) closes it.
+    shopDialog.addEventListener("click", (e) => {
+      if (e.target === shopDialog) shopDialog.close();
+    });
   } catch (err) {
     loading.textContent = `${err.message}. Serve this folder over HTTP (see README).`;
     console.error(err);

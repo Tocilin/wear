@@ -10,7 +10,10 @@
   <main class="layout">
     <aside class="panel" aria-label="Outfit colors">
       <div class="groups" id="panel"></div>
-      <button type="button" class="random" id="random" hidden>Surprise me</button>
+      <div class="actions">
+        <button type="button" class="random" id="random" hidden>Surprise me</button>
+        <button type="button" class="shop" id="shop">Where to buy</button>
+      </div>
     </aside>
     <section class="stage">
       <div class="frame">
@@ -20,6 +23,13 @@
       <p class="summary" id="summary"></p>
     </section>
   </main>
+  <dialog class="shop-dialog" id="shop-dialog" aria-labelledby="shop-title">
+    <div class="shop-head">
+      <h2 id="shop-title">Where to buy</h2>
+      <form method="dialog"><button class="shop-close" aria-label="Close">×</button></form>
+    </div>
+    <ul class="shop-list" id="shop-list"></ul>
+  </dialog>
   <script src="app.js"></script>
 </body>
 </html>
