@@ -51,6 +51,7 @@ const ctx = canvas.getContext("2d", { willReadFrequently: true });
 const panel = document.getElementById("panel");
 const summary = document.getElementById("summary");
 const loading = document.getElementById("loading");
+const randomButton = document.getElementById("random");
 
 // Selected color index per category; start on the photo's own colors.
 const selected = {};
@@ -133,6 +134,18 @@ function render() {
   summary.textContent = CATEGORIES.map((cat) => cat.colors[selected[cat.id]].name + " " + cat.label.toLowerCase()).join(" · ");
 }
 
+const refreshers = []; // redraw each category's swatch state
+
+// Pick a random color for every garment, making sure the outfit changes.
+function randomize() {
+  const before = CATEGORIES.map((cat) => selected[cat.id]).join();
+  do {
+    for (const cat of CATEGORIES) selected[cat.id] = Math.floor(Math.random() * cat.colors.length);
+  } while (CATEGORIES.map((cat) => selected[cat.id]).join() === before);
+  refreshers.forEach((refresh) => refresh());
+  render();
+}
+
 function buildPanel() {
   for (const cat of CATEGORIES) {
     const group = document.createElement("div");
@@ -169,6 +182,7 @@ function buildPanel() {
       current.textContent = cat.colors[selected[cat.id]].name;
     }
     update();
+    refreshers.push(update);
 
     group.append(title, current, swatches);
     panel.appendChild(group);
@@ -196,6 +210,8 @@ async function init() {
 
     render();
     loading.hidden = true;
+    randomButton.hidden = false;
+    randomButton.addEventListener("click", randomize);
   } catch (err) {
     loading.textContent = `${err.message}. Serve this folder over HTTP (see README).`;
     console.error(err);
