@@ -119,12 +119,80 @@ canvas {
   text-align: center;
 }
 
+/* Phones: photo fills the screen above one compact row per garment, so every
+   color is in reach without scrolling away from the picture. */
 @media (max-width: 760px) {
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
   .layout {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    gap: 10px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  }
+  .stage {
+    flex: 1;
+    min-height: 0;
+  }
+  .frame {
+    flex: 1;
+    min-height: 0;
+    max-width: none;
+    aspect-ratio: auto;
+    background: none;
+  }
+  canvas {
+    object-fit: contain;
+  }
+  .summary {
+    display: none;
   }
   .panel {
     position: static;
     order: 2;
+    align-self: stretch;
+    gap: 6px;
+  }
+  .group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 10px;
+    border-radius: 10px;
+  }
+  .group h2 {
+    flex: 0 0 58px;
+    margin: 0;
+    font-size: 11px;
+  }
+  .group .current {
+    display: none;
+  }
+  .swatches {
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 4px;
+    gap: 10px;
+    scrollbar-width: none;
+  }
+  .swatch {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Short screens (small phones): tighten the rows a little more. */
+@media (max-width: 760px) and (max-height: 700px) {
+  .group {
+    padding: 3px 10px;
+  }
+  .swatch {
+    width: 32px;
+    height: 32px;
   }
 }
