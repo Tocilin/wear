@@ -39,6 +39,7 @@ body {
 }
 
 .group {
+  position: relative;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -117,14 +118,8 @@ canvas {
 
 .loading[hidden] { display: none; }
 
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .random {
-  flex: 1;
+  width: 100%;
   padding: 12px 16px;
   border: 0;
   border-radius: 12px;
@@ -146,18 +141,30 @@ canvas {
 
 /* Kept quiet on purpose: shopping is occasional, picking colors is not. */
 .shop {
-  padding: 8px 4px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
   border: 0;
+  border-radius: 8px;
   background: none;
   color: var(--muted);
   font: inherit;
-  font-size: 14px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  font-size: 12px;
   cursor: pointer;
 }
 
-.shop:hover { color: var(--text); }
+.shop:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.shop:focus-visible {
+  outline: 2px solid var(--text);
+}
 
 .shop-dialog {
   width: min(440px, calc(100vw - 32px));
@@ -203,35 +210,17 @@ canvas {
   cursor: pointer;
 }
 
-.shop-list {
-  margin: 0;
-  padding: 0 20px 20px;
-  list-style: none;
+.shop-body {
+  padding: 4px 20px 20px;
 }
 
-.shop-item {
-  padding: 14px 0;
-  border-top: 1px solid var(--line);
-}
+.shop-body p { margin: 0; }
 
-.shop-item:first-child { border-top: 0; }
-
-.shop-item p { margin: 0; }
-
-.shop-label {
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-.shop-item .shop-name {
-  margin-top: 2px;
+.shop-name {
   font-weight: 600;
 }
 
-.shop-item .shop-facts {
+.shop-body .shop-facts {
   margin-top: 2px;
   color: var(--muted);
   font-size: 13px;
@@ -239,7 +228,7 @@ canvas {
 
 .shop-buy {
   display: inline-block;
-  margin-top: 8px;
+  margin-top: 12px;
   color: var(--accent);
   font-size: 14px;
   font-weight: 600;
@@ -321,7 +310,17 @@ canvas {
     padding: 5px;
     gap: 10px;
   }
-  /* The shop list slides up as a bottom sheet. */
+  /* Just the bag icon at the end of each row. */
+  .shop {
+    position: static;
+    flex: none;
+    margin-left: auto;
+    padding: 8px;
+  }
+  .shop span {
+    display: none;
+  }
+  /* The shop details slide up as a bottom sheet. */
   .shop-dialog {
     width: 100%;
     max-width: none;

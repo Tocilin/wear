@@ -55,8 +55,6 @@ const CATEGORIES = [
     product: STAY_TUCKED,
     colors: [
       { name: "White", hex: "#f4f3ef", original: true },
-      { name: "Heather Gray", hex: "#a9a9a6" },
-      { name: "Black", hex: "#262626" },
     ],
   },
   {
@@ -99,9 +97,9 @@ const panel = document.getElementById("panel");
 const summary = document.getElementById("summary");
 const loading = document.getElementById("loading");
 const randomButton = document.getElementById("random");
-const shopButton = document.getElementById("shop");
 const shopDialog = document.getElementById("shop-dialog");
-const shopList = document.getElementById("shop-list");
+const shopTitle = document.getElementById("shop-title");
+const shopBody = document.getElementById("shop-body");
 
 // Selected color index per category; start on the photo's own colors.
 const selected = {};
@@ -196,51 +194,40 @@ function randomize() {
   render();
 }
 
-// "Where to buy": every garment's product, in the color picked right now.
-function renderShopList() {
-  shopList.replaceChildren();
-  for (const cat of CATEGORIES) {
-    const product = cat.product;
-    if (!product) continue;
+// "Where to buy" for one garment, in the color picked right now.
+function openShop(cat) {
+  const product = cat.product;
 
-    const item = document.createElement("li");
-    item.className = "shop-item";
+  const name = document.createElement("p");
+  name.className = "shop-name";
+  name.textContent = `${product.brand} ${product.name}`;
 
-    const label = document.createElement("p");
-    label.className = "shop-label";
-    label.textContent = cat.label;
+  const facts = document.createElement("p");
+  facts.className = "shop-facts";
+  facts.textContent = [
+    cat.colors[selected[cat.id]].name,
+    product.size && `Size ${product.size}`,
+    product.fit && `${product.fit} fit`,
+    product.width && `Width ${product.width}`,
+    product.material,
+    product.price,
+  ].filter(Boolean).join(" · ");
 
-    const name = document.createElement("p");
-    name.className = "shop-name";
-    name.textContent = `${product.brand} ${product.name}`;
+  const buy = document.createElement("a");
+  buy.className = "shop-buy";
+  buy.href = product.url;
+  buy.target = "_blank";
+  buy.rel = "noopener";
+  buy.textContent = `Buy at ${product.store}`;
 
-    const facts = document.createElement("p");
-    facts.className = "shop-facts";
-    facts.textContent = [
-      cat.colors[selected[cat.id]].name,
-      product.size && `Size ${product.size}`,
-      product.fit && `${product.fit} fit`,
-      product.width && `Width ${product.width}`,
-      product.material,
-      product.price,
-    ].filter(Boolean).join(" · ");
-
-    const buy = document.createElement("a");
-    buy.className = "shop-buy";
-    buy.href = product.url;
-    buy.target = "_blank";
-    buy.rel = "noopener";
-    buy.textContent = `Buy at ${product.store}`;
-
-    item.append(label, name, facts, buy);
-    shopList.appendChild(item);
-  }
-}
-
-function openShop() {
-  renderShopList();
+  shopTitle.textContent = cat.label;
+  shopBody.replaceChildren(name, facts, buy);
   shopDialog.showModal();
 }
+
+const BAG_ICON = `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none"
+  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>`;
 
 function buildPanel() {
   for (const cat of CATEGORIES) {
@@ -281,6 +268,16 @@ function buildPanel() {
     refreshers.push(update);
 
     group.append(title, current, swatches);
+
+    if (cat.product) {
+      const shop = document.createElement("button");
+      shop.type = "button";
+      shop.className = "shop";
+      shop.setAttribute("aria-label", `Where to buy the ${cat.label.toLowerCase()}`);
+      shop.innerHTML = `${BAG_ICON}<span>Where to buy</span>`;
+      shop.addEventListener("click", () => openShop(cat));
+      group.appendChild(shop);
+    }
     panel.appendChild(group);
   }
 }
@@ -308,7 +305,6 @@ async function init() {
     loading.hidden = true;
     randomButton.hidden = false;
     randomButton.addEventListener("click", randomize);
-    shopButton.addEventListener("click", openShop);
     // Clicking the dimmed backdrop (outside the sheet) closes it.
     shopDialog.addEventListener("click", (e) => {
       if (e.target === shopDialog) shopDialog.close();
