@@ -9,15 +9,10 @@ const TROUSER = {
   name: "WarpTech Commuter Slim Fit Trouser",
   fit: "Slim",
   size: "34 × 34",
+  material: "Polyester",
   price: "$88",
   store: "Stitch Fix",
   url: "https://www.stitchfix.com/product/01-Algo-WarpTech-Commuter-Slim-Fit-Trouser/N32ZMVNWX",
-};
-const FIVE_POCKET = {
-  ...TROUSER,
-  name: "WarpTech Commuter 5 Pocket Slim Fit Pant",
-  price: null,
-  url: null,
 };
 
 const GIRONDE = {
@@ -78,7 +73,7 @@ const CATEGORIES = [
     colors: [
       // Sampled from the 01.ALGO WarpTech Commuter product photos.
       { name: "Khaki", hex: "#b4a18b", product: TROUSER },
-      { name: "Light Grey", hex: "#868183", product: FIVE_POCKET },
+      { name: "Light Grey", hex: "#868183", product: TROUSER },
       { name: "Blue", hex: "#213a61", product: TROUSER },
     ],
   },
@@ -208,6 +203,7 @@ function renderDetails(el, product) {
     product.size && `Size ${product.size}`,
     product.fit && `${product.fit} fit`,
     product.width && `Width ${product.width}`,
+    product.material,
     product.price,
   ].filter(Boolean).join(" · ");
 
