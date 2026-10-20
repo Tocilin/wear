@@ -8,12 +8,14 @@
 </head>
 <body>
   <main class="layout">
-    <aside class="panel" id="panel" aria-label="Outfit colors"></aside>
+    <aside class="panel" aria-label="Outfit colors">
+      <div class="groups" id="panel"></div>
+      <button type="button" class="random" id="random" hidden>Surprise me</button>
+    </aside>
     <section class="stage">
       <div class="frame">
         <canvas id="canvas" aria-label="Outfit preview"></canvas>
         <p class="loading" id="loading">Loading…</p>
-        <button type="button" class="random" id="random" hidden>Random</button>
       </div>
       <p class="summary" id="summary"></p>
     </section>

@@ -26,10 +26,14 @@ body {
   align-items: start;
 }
 
-.panel {
+.panel,
+.groups {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.panel {
   position: sticky;
   top: 24px;
 }
@@ -148,21 +152,18 @@ canvas {
 .loading[hidden] { display: none; }
 
 .random {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  padding: 10px 16px;
+  width: 100%;
+  padding: 12px 16px;
   border: 0;
-  border-radius: 999px;
-  background: rgba(29, 29, 31, .82);
+  border-radius: 12px;
+  background: var(--text);
   color: #fff;
   font: inherit;
   font-weight: 600;
   cursor: pointer;
-  backdrop-filter: blur(4px);
 }
 
-.random:hover { background: rgba(29, 29, 31, .95); }
+.random:hover { background: #000; }
 
 .random:focus-visible {
   outline: 2px solid var(--accent);
@@ -196,7 +197,7 @@ canvas {
     min-height: 0;
   }
   .frame {
-    /* Sized to the photo itself so the Random button sits on its corner. */
+    /* Sized to the photo itself rather than the full width. */
     flex: 1;
     min-height: 0;
     width: auto;
@@ -212,7 +213,13 @@ canvas {
     position: static;
     order: 2;
     align-self: stretch;
+    gap: 8px;
+  }
+  .groups {
     gap: 6px;
+  }
+  .random {
+    padding: 10px 16px;
   }
   .group {
     display: flex;
@@ -275,6 +282,13 @@ canvas {
     height: auto;
     aspect-ratio: 1;
     outline-offset: 2px;
+  }
+}
+
+/* Narrow phones: a bare "Buy" leaves room for the price. */
+@media (max-width: 360px) {
+  .details-store {
+    display: none;
   }
 }
 

@@ -182,7 +182,10 @@ function renderDetails(el, product) {
     buy.href = product.url;
     buy.target = "_blank";
     buy.rel = "noopener";
-    buy.textContent = `Buy at ${product.store}`;
+    const store = document.createElement("span");
+    store.className = "details-store";
+    store.textContent = ` at ${product.store}`;
+    buy.append("Buy", store);
     el.append(buy);
   }
 }
