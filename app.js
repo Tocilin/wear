@@ -28,11 +28,10 @@ const CATEGORIES = [
     label: "Pants",
     mask: "assets/mask-pants.png",
     colors: [
-      { name: "Stone / Khaki", hex: "#c6aa7f" },
-      { name: "Light Gray", hex: "#c4c3c1", original: true },
-      { name: "Taupe / Gray", hex: "#8b7c70" },
-      { name: "Olive", hex: "#5f6a3a" },
-      { name: "Navy", hex: "#1f2a47" },
+      // Sampled from the 01.ALGO WarpTech Commuter product photos.
+      { name: "Khaki", hex: "#b4a18b" },
+      { name: "Light Grey", hex: "#868183" },
+      { name: "Blue", hex: "#213a61" },
     ],
   },
   {
