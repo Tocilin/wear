@@ -3,19 +3,20 @@
 
 const PHOTO = "assets/model.jpg";
 
-// Where to buy the pants shown. Set `price` (e.g. "$98") to show it.
+// Where to buy the pants shown. `price: null` hides the price.
 const TROUSER = {
   brand: "01.ALGO",
   name: "WarpTech Commuter Slim Fit Trouser",
   fit: "Slim",
   size: "34 × 34",
-  price: null,
+  price: "$88",
   store: "Stitch Fix",
   url: "https://www.stitchfix.com/product/01-Algo-WarpTech-Commuter-Slim-Fit-Trouser/N32ZMVNWX",
 };
 const FIVE_POCKET = {
   ...TROUSER,
   name: "WarpTech Commuter 5 Pocket Slim Fit Pant",
+  price: null,
   url: null,
 };
 
