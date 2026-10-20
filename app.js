@@ -64,7 +64,8 @@ const CATEGORIES = [
     product: GIRONDE,
     colors: [
       { name: "Dark Navy", hex: "#1f2c4c", original: true },
-      { name: "Light Blue", hex: "#8db3e8" },
+      // Sampled from the UNTUCKit Light Blue Gingham product photo.
+      { name: "Light Blue Gingham", hex: "#5a85b2" },
     ],
   },
   {
