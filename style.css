@@ -239,7 +239,11 @@ canvas {
   .group {
     flex-wrap: wrap;
   }
-  /* Product details: name and facts on the left, Buy on the right. */
+  /* Product details: name and facts on the left, Buy on the right. Only
+     the garment last tapped shows them, so the photo keeps its room. */
+  .group:not(.active) .details {
+    display: none;
+  }
   .details {
     flex: 1 0 100%;
     display: grid;

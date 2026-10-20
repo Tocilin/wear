@@ -3,7 +3,7 @@
 
 const PHOTO = "assets/model.jpg";
 
-// Where to buy the pants shown. `price: null` hides the price.
+// Where to buy the clothes shown. `price: null` hides the price.
 const TROUSER = {
   brand: "01.ALGO",
   name: "WarpTech Commuter Slim Fit Trouser",
@@ -20,15 +20,46 @@ const FIVE_POCKET = {
   url: null,
 };
 
+const GIRONDE = {
+  brand: "UNTUCKit",
+  name: "Performance Gironde Shirt",
+  fit: "Slim",
+  size: "L",
+  price: "$109",
+  store: "UNTUCKit",
+  url: "https://www.untuckit.com/products/gironde-navy?variant=30280167948366",
+};
+
+const STAY_TUCKED = {
+  brand: "Tommy John",
+  name: "Second Skin Crew Neck Stay-Tucked Undershirt",
+  fit: null,
+  size: null,
+  price: null,
+  store: "Tommy John",
+  url: "https://www.tommyjohn.com/products/second-skin-crew-neck-stay-tucked-undershirt-1-3-pack?variant=41106224676909",
+};
+
+const CODE_H_VIBE = {
+  brand: "Clarks",
+  name: "Code H Vibe",
+  fit: null,
+  width: "D (Medium)",
+  size: null,
+  price: "$120",
+  store: "Zappos",
+  url: "https://www.zappos.com/p/mens-clarks-code-h-vibe-navy-combi/product/10063110/color/3057",
+};
+
 const CATEGORIES = [
   {
     id: "tshirt",
     label: "T-shirt",
     mask: "assets/mask-tshirt.png",
     colors: [
-      { name: "White", hex: "#f4f3ef", original: true },
-      { name: "Heather Gray", hex: "#a9a9a6" },
-      { name: "Black", hex: "#262626" },
+      { name: "White", hex: "#f4f3ef", original: true, product: STAY_TUCKED },
+      { name: "Heather Gray", hex: "#a9a9a6", product: STAY_TUCKED },
+      { name: "Black", hex: "#262626", product: STAY_TUCKED },
     ],
   },
   {
@@ -36,7 +67,7 @@ const CATEGORIES = [
     label: "Shirt",
     mask: "assets/mask-shirt.png",
     colors: [
-      { name: "Dark Navy", hex: "#1f2c4c", original: true },
+      { name: "Dark Navy", hex: "#1f2c4c", original: true, product: GIRONDE },
       { name: "Light Blue", hex: "#8db3e8" },
     ],
   },
@@ -56,7 +87,7 @@ const CATEGORIES = [
     label: "Shoes",
     mask: "assets/mask-shoes.png",
     colors: [
-      { name: "Navy Sneakers", hex: "#1f2a44", original: true },
+      { name: "Navy Sneakers", hex: "#1f2a44", original: true, product: CODE_H_VIBE },
       { name: "White Sneakers", hex: "#f1f1ee" },
     ],
   },
@@ -173,9 +204,15 @@ function renderDetails(el, product) {
 
   const facts = document.createElement("p");
   facts.className = "details-facts";
-  facts.textContent = [`Size ${product.size}`, `${product.fit} fit`, product.price].filter(Boolean).join(" · ");
+  facts.textContent = [
+    product.size && `Size ${product.size}`,
+    product.fit && `${product.fit} fit`,
+    product.width && `Width ${product.width}`,
+    product.price,
+  ].filter(Boolean).join(" · ");
 
-  el.append(name, facts);
+  el.append(name);
+  if (facts.textContent) el.append(facts);
   if (product.url) {
     const buy = document.createElement("a");
     buy.className = "details-buy";
@@ -188,6 +225,11 @@ function renderDetails(el, product) {
     buy.append("Buy", store);
     el.append(buy);
   }
+}
+
+// Phones only have room for one product's details: the garment last tapped.
+function setActive(group) {
+  for (const g of panel.children) g.classList.toggle("active", g === group);
 }
 
 function buildPanel() {
@@ -214,6 +256,7 @@ function buildPanel() {
       b.setAttribute("aria-label", color.name);
       b.addEventListener("click", () => {
         selected[cat.id] = i;
+        setActive(group);
         update();
         render();
       });
@@ -236,6 +279,7 @@ function buildPanel() {
     group.append(title, current, swatches, details);
     panel.appendChild(group);
   }
+  setActive(panel.firstElementChild);
 }
 
 async function init() {
