@@ -262,6 +262,10 @@ canvas {
     white-space: nowrap;
     font-size: 12px;
   }
+  /* Facts wrap rather than cut off the size, material or price. */
+  .details .details-facts {
+    white-space: normal;
+  }
   .details-buy {
     grid-column: 2;
     grid-row: 1 / 3;
